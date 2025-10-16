@@ -10,22 +10,15 @@ Le but du nouveau code est d'ajouter la contribution des flux d'eau latéraux à
 
 Nous proposons donc une nouvelle approche, plus rigoureuse physiquement. Les équations seront traitées en 2D sur un maillage régulier qui sera centrée sur notre capteur. Il sera considéré fin en largeur, le but n'étant pas de résoudre en 2D sur toute l'aquifère. Les points supplémentaires en largeur sont donc des intermédiaires de calcul qui nous permettront d'implémenter le flux latéral d'eau comme une condition de Neumann sur notre maillage. Les équations traitées sont les suivantes :
 
-$$S_s \frac{\partial H}{\partial t} = K \Delta H$$ \\ $$\frac{\partial T}{\partial t} = \kappa_e \Delta T + \alpha_e \nabla H \cdot \nabla T$$
+$$S_s \frac{\partial H}{\partial t} = K \Delta H$$ 
+$$\frac{\partial T}{\partial t} = \kappa_e \Delta T + \alpha_e \nabla H \cdot \nabla T$$
 
 Pour les traiter, on utilise comme précedemment un schéma de Crank-Nicolson régi par un paramètre $\alpha$ tel que le schéma soit explicite pour $\alpha=1$ et implicite pour $\alpha=0$. Pour les variables, on utilisera la notation suivante $U^{n}_{i,j}$ avec n l'indice temporel, i l'indice de l'axe z vertical, et j l'indice de l'axe x horizontal.
 Les discrétisations sont les suivantes :
 
-$$
-\small
-S_s \frac{H_{i,j}^{n+1} - H_{i,j}^{n}}{\Delta t} = \alpha K \left[ \frac{H_{i+1,j}^n - 2H_{i,j}^n + H_{i-1,j}^n}{(\Delta z)^2} + \frac{H_{i,j+1}^n - 2H_{i,j}^n + H_{i,j-1}^n}{(\Delta x)^2} \right] + (1-\alpha) K \left[ \frac{H_{i+1,j}^{n+1} - 2H_{i,j}^{n+1} + H_{i-1,j}^{n+1}}{(\Delta z)^2} + \frac{H_{i,j+1}^{n+1} - 2H_{i,j}^{n+1} + H_{i,j-1}^{n+1}}{(\Delta x)^2} \right]
-$$ \\
+$$S_s \frac{H_{i,j}^{n+1} - H_{i,j}^{n}}{\Delta t} = \alpha K \left[ \frac{H_{i+1,j}^n - 2H_{i,j}^n + H_{i-1,j}^n}{(\Delta z)^2} + \frac{H_{i,j+1}^n - 2H_{i,j}^n + H_{i,j-1}^n}{(\Delta x)^2} \right] + (1-\alpha) K \left[ \frac{H_{i+1,j}^{n+1} - 2H_{i,j}^{n+1} + H_{i-1,j}^{n+1}}{(\Delta z)^2} + \frac{H_{i,j+1}^{n+1} - 2H_{i,j}^{n+1} + H_{i,j-1}^{n+1}}{(\Delta x)^2} \right]$$
 
-$$
-\small 
-\frac{T_{i,j}^{n+1} - T_{i,j}^{n}}{\Delta t} = 
-\alpha \left\{ \kappa_e \left[ \frac{T_{i+1,j}^n - 2T_{i,j}^n + T_{i-1,j}^n}{(\Delta z)^2} + \frac{T_{i,j+1}^n - 2T_{i,j}^n + T_{i,j-1}^n}{(\Delta x)^2} \right] + \alpha_e \left[ \left(\frac{H_{i+1,j}^n - H_{i-1,j}^n}{2\Delta z}\right)\left(\frac{T_{i+1,j}^n - T_{i-1,j}^n}{2\Delta z}\right) + \left(\frac{H_{i,j+1}^n - H_{i,j-1}^n}{2\Delta x}\right)\left(\frac{T_{i,j+1}^n - T_{i,j-1}^n}{2\Delta x}\right) \right] \right\} \\
-+ (1-\alpha) \left\{ \kappa_e \left[ \frac{T_{i+1,j}^{n+1} - 2T_{i,j}^{n+1} + T_{i-1,j}^{n+1}}{(\Delta z)^2} + \frac{T_{i,j+1}^{n+1} - 2T_{i,j}^{n+1} + T_{i,j-1}^{n+1}}{(\Delta x)^2} \right] + \alpha_e \left[ \left(\frac{H_{i+1,j}^n - H_{i-1,j}^n}{2\Delta z}\right)\left(\frac{T_{i+1,j}^{n+1} - T_{i-1,j}^{n+1}}{2\Delta z}\right) + \left(\frac{H_{i,j+1}^n - H_{i,j-1}^n}{2\Delta x}\right)\left(\frac{T_{i,j+1}^{n+1} - T_{i,j-1}^{n+1}}{2\Delta x}\right) \right] \right\}
-$$
+$$\frac{T_{i,j}^{n+1} - T_{i,j}^{n}}{\Delta t} = \alpha \left\{ \kappa_e \left[ \frac{T_{i+1,j}^n - 2T_{i,j}^n + T_{i-1,j}^n}{(\Delta z)^2} + \frac{T_{i,j+1}^n - 2T_{i,j}^n + T_{i,j-1}^n}{(\Delta x)^2} \right] + \alpha_e \left[ \left(\frac{H_{i+1,j}^n - H_{i-1,j}^n}{2\Delta z}\right)\left(\frac{T_{i+1,j}^n - T_{i-1,j}^n}{2\Delta z}\right) + \left(\frac{H_{i,j+1}^n - H_{i,j-1}^n}{2\Delta x}\right)\left(\frac{T_{i,j+1}^n - T_{i,j-1}^n}{2\Delta x}\right) \right] \right\} + (1-\alpha) \left\{ \kappa_e \left[ \frac{T_{i+1,j}^{n+1} - 2T_{i,j}^{n+1} + T_{i-1,j}^{n+1}}{(\Delta z)^2} + \frac{T_{i,j+1}^{n+1} - 2T_{i,j}^{n+1} + T_{i,j-1}^{n+1}}{(\Delta x)^2} \right] + \alpha_e \left[ \left(\frac{H_{i+1,j}^n - H_{i-1,j}^n}{2\Delta z}\right)\left(\frac{T_{i+1,j}^{n+1} - T_{i-1,j}^{n+1}}{2\Delta z}\right) + \left(\frac{H_{i,j+1}^n - H_{i,j-1}^n}{2\Delta x}\right)\left(\frac{T_{i,j+1}^{n+1} - T_{i,j-1}^{n+1}}{2\Delta x}\right) \right] \right\}$$
 
 
 ### Conditions initiales
