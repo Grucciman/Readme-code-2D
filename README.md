@@ -16,12 +16,10 @@ Pour les traiter, on utilise comme précedemment un schéma de Crank-Nicolson r�
 Les discrétisations sont les suivantes :
 
 $$
-\small
 S_s \frac{H_{i,j}^{n+1} - H_{i,j}^{n}}{\Delta t} = \alpha K \left[ \frac{H_{i+1,j}^n - 2H_{i,j}^n + H_{i-1,j}^n}{(\Delta z)^2} + \frac{H_{i,j+1}^n - 2H_{i,j}^n + H_{i,j-1}^n}{(\Delta x)^2} \right] + (1-\alpha) K \left[ \frac{H_{i+1,j}^{n+1} - 2H_{i,j}^{n+1} + H_{i-1,j}^{n+1}}{(\Delta z)^2} + \frac{H_{i,j+1}^{n+1} - 2H_{i,j}^{n+1} + H_{i,j-1}^{n+1}}{(\Delta x)^2} \right]
 $$ \\
 
-$$
-\small 
+$$ 
 \frac{T_{i,j}^{n+1} - T_{i,j}^{n}}{\Delta t} = 
 \alpha \left\{ \kappa_e \left[ \frac{T_{i+1,j}^n - 2T_{i,j}^n + T_{i-1,j}^n}{(\Delta z)^2} + \frac{T_{i,j+1}^n - 2T_{i,j}^n + T_{i,j-1}^n}{(\Delta x)^2} \right] + \alpha_e \left[ \left(\frac{H_{i+1,j}^n - H_{i-1,j}^n}{2\Delta z}\right)\left(\frac{T_{i+1,j}^n - T_{i-1,j}^n}{2\Delta z}\right) + \left(\frac{H_{i,j+1}^n - H_{i,j-1}^n}{2\Delta x}\right)\left(\frac{T_{i,j+1}^n - T_{i,j-1}^n}{2\Delta x}\right) \right] \right\} \\
 + (1-\alpha) \left\{ \kappa_e \left[ \frac{T_{i+1,j}^{n+1} - 2T_{i,j}^{n+1} + T_{i-1,j}^{n+1}}{(\Delta z)^2} + \frac{T_{i,j+1}^{n+1} - 2T_{i,j}^{n+1} + T_{i,j-1}^{n+1}}{(\Delta x)^2} \right] + \alpha_e \left[ \left(\frac{H_{i+1,j}^n - H_{i-1,j}^n}{2\Delta z}\right)\left(\frac{T_{i+1,j}^{n+1} - T_{i-1,j}^{n+1}}{2\Delta z}\right) + \left(\frac{H_{i,j+1}^n - H_{i,j-1}^n}{2\Delta x}\right)\left(\frac{T_{i,j+1}^{n+1} - T_{i,j-1}^{n+1}}{2\Delta x}\right) \right] \right\}
